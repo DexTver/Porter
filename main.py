@@ -4,7 +4,7 @@ pygame.init()
 size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
-FPS = 50
+FPS = 200
 
 forklift = None
 
@@ -19,7 +19,7 @@ tile_images = {
     'container': load_image('container_1.jpg'),
     'crate': load_image('unnamed.jpg')}
 
-forklift_image = load_image('forklift.png')
+forklift_image = load_image('forklift.png', -1)
 
 
 def generate_level(level):
@@ -54,6 +54,26 @@ class Player(pygame.sprite.Sprite):
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
 
+    def update(self):
+        sp = pygame.key.get_pressed()
+        if sp[pygame.K_LEFT] == 1:
+            self.rect.x -= 1
+        if sp[pygame.K_RIGHT] == 1:
+            self.rect.x += 1
+        if sp[pygame.K_UP] == 1:
+            self.rect.y -= 1
+        if sp[pygame.K_DOWN] == 1:
+            self.rect.y += 1
+        if pygame.sprite.spritecollideany(self, containers_group):
+            if sp[pygame.K_LEFT] == 1:
+                self.rect.x += 1
+            if sp[pygame.K_RIGHT] == 1:
+                self.rect.x -= 1
+            if sp[pygame.K_UP] == 1:
+                self.rect.y += 1
+            if sp[pygame.K_DOWN] == 1:
+                self.rect.y -= 1
+
 
 forklift, level_x, level_y = generate_level(load_level('map.txt'))
 running = True
@@ -61,9 +81,12 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
+        if event.type == pygame.KEYDOWN:
+            forklift_group.update()
 
     screen.fill((160, 160, 160))
     all_sprites.draw(screen)
+    forklift_group.update()
     forklift_group.draw(screen)
     pygame.display.flip()
 
