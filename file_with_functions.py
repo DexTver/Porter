@@ -9,7 +9,7 @@ def load_image(name, colorkey=0):
         print(f"Файл с изображением '{fullname}' не найден")
         sys.exit()
     image = pygame.image.load(fullname)
-    if colorkey is not None:
+    if colorkey != 0:
         image = image.convert()
         if colorkey == -1:
             colorkey = image.get_at((1, 1))

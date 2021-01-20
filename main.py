@@ -1,4 +1,5 @@
 from file_with_functions import *
+from random import randrange
 
 pygame.init()
 size = width, height = 500, 500
@@ -20,11 +21,15 @@ box_group = pygame.sprite.Group()
 tile_width = tile_height = 50
 
 tile_images = {
-    'container': load_image('container_1.jpg'),
-    'crate': load_image('unnamed.jpg'),
-    'finish': load_image('crown.png', -1)}
+    'container_1': load_image('container_1.jpg'),
+    'container_2': load_image('container_2.jpg'),
+    'container_3': load_image('container_3.jpg'),
+    'container_4': load_image('container_4.jpg'),
+    'container_5': load_image('container_5.jpg'),
+    'crate': load_image('fon.jpg'),
+    'finish': load_image('crown.png')}
 
-forklift_image = load_image('forklift.png', -1)
+forklift_image = load_image('forklift.png')
 box_image = load_image('box.png')
 
 
@@ -36,7 +41,9 @@ def generate_level(level):
             if level[y][x] == '.':
                 Tile('crate', x, y)
             elif level[y][x] == '#':
-                Tile('container', x, y)
+                a = randrange(1, 6)
+                chosen_container = 'container_' + str(a)
+                Tile(chosen_container, x, y)
             elif level[y][x] == '0':
                 Tile('crate', x, y)
                 box_object = Box(x, y)
@@ -54,13 +61,13 @@ def generate_level(level):
 class Tile(pygame.sprite.Sprite):
     def __init__(self, tile_type, pos_x, pos_y):
         super().__init__(crate, all_sprites)
-        if tile_type == 'container':
+        if tile_type == 'container_1' or tile_type == 'container_2' or tile_type == 'container_3' \
+                or tile_type == 'container_4' or tile_type == 'container_5':
             containers_group.add(self)
         if tile_type == 'finish':
             all_sprites.add(self)
         self.image = tile_images[tile_type]
-        self.rect = self.image.get_rect().move(
-            tile_width * pos_x, tile_height * pos_y)
+        self.rect = self.image.get_rect().move(tile_width * pos_x, tile_height * pos_y)
 
 
 class Player(pygame.sprite.Sprite):
@@ -109,6 +116,7 @@ class Box(pygame.sprite.Sprite):
         self.image = box_image
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
+        self.finishing = False
 
     def update(self):
         sp = pygame.key.get_pressed()
@@ -133,8 +141,11 @@ class Box(pygame.sprite.Sprite):
             if sp[pygame.K_DOWN] == 1:
                 self.rect.y -= 1
                 forklift.back('down')
-        if self.rect.x == finish_coords[0] + 1 or self.rect == finish_coords[1] - 1:
+        if self.rect.x in range(finish_coords[0] - 10,
+                                finish_coords[0] + 10) and self.rect.y in range(
+                finish_coords[1] - 10, finish_coords[1] + 10) and not self.finishing:
             print('Congratulations!')
+            self.finishing = True
 
 
 forklift, box_game, level_x, level_y = generate_level(load_level('map.txt'))
