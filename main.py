@@ -53,7 +53,7 @@ def generate_level(level):
                 finish_coords = tile_width * x, tile_height * y
             elif level[y][x] == '@':
                 Tile('crate', x, y)
-                new_player = Player(x, y)
+                new_player = Player(load_image('animated_forklift.png'), 4, 1, x, y)
     # вернем игрока, а также размер поля в клетках
     return new_player, box_object, x, y
 
@@ -71,22 +71,37 @@ class Tile(pygame.sprite.Sprite):
 
 
 class Player(pygame.sprite.Sprite):
-    def __init__(self, pos_x, pos_y):
+    def __init__(self, sheet, columns, rows, pos_x, pos_y):
         super().__init__(forklift_group, all_sprites)
-        self.image = forklift_image
+        self.frames = []
+        self.cut_sheet(sheet, columns, rows)
+        self.image = self.frames[0]
         self.rect = self.image.get_rect().move(
             tile_width * pos_x, tile_height * pos_y)
+
+    def cut_sheet(self, sheet, columns, rows):
+        self.rect = pygame.Rect(0, 0, sheet.get_width() // columns,
+                                sheet.get_height() // rows)
+        for j in range(rows):
+            for i in range(columns):
+                frame_location = (self.rect.w * i, self.rect.h * j)
+                self.frames.append(sheet.subsurface(pygame.Rect(
+                    frame_location, self.rect.size)))
 
     def update(self):
         sp = pygame.key.get_pressed()
         if sp[pygame.K_LEFT] == 1:
             self.rect.x -= 1
+            self.image = self.frames[3]
         if sp[pygame.K_RIGHT] == 1:
             self.rect.x += 1
+            self.image = self.frames[1]
         if sp[pygame.K_UP] == 1:
             self.rect.y -= 1
+            self.image = self.frames[0]
         if sp[pygame.K_DOWN] == 1:
             self.rect.y += 1
+            self.image = self.frames[2]
         if pygame.sprite.spritecollideany(self, containers_group):
             if sp[pygame.K_LEFT] == 1:
                 self.rect.x += 1
@@ -162,6 +177,7 @@ while running:
     box_group.draw(screen)
     forklift_group.update()
     forklift_group.draw(screen)
+    clock.tick(FPS)
     pygame.display.flip()
 
 pygame.quit()
