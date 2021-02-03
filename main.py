@@ -1,11 +1,14 @@
 from file_with_functions import *
 from random import randrange
+from datetime import datetime, timedelta
 
 pygame.init()
 size = width, height = 500, 500
 screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 FPS = 200
+
+font = pygame.font.Font('Data/main_font.ttf', 50)
 
 forklift = None
 box_game = None
@@ -164,6 +167,7 @@ class Box(pygame.sprite.Sprite):
 
 
 forklift, box_game, level_x, level_y = generate_level(load_level('map.txt'))
+start_tick = pygame.time.get_ticks()
 running = True
 while running:
     for event in pygame.event.get():
@@ -178,6 +182,14 @@ while running:
     forklift_group.update()
     forklift_group.draw(screen)
     clock.tick(FPS)
+    now_tick = pygame.time.get_ticks()
+    seconds = (now_tick - start_tick) // 1000
+    minutes = seconds // 60
+    seconds = str(seconds % 60)
+    if len(seconds) == 1:
+        seconds = '0' + seconds
+    time_render = font.render(f'{minutes}:{seconds}', True, pygame.Color('#3574e8'))
+    screen.blit(time_render, (410, 5))
     pygame.display.flip()
 
 pygame.quit()
