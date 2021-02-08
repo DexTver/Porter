@@ -9,6 +9,7 @@ clock = pygame.time.Clock()
 FPS = 200
 
 font = pygame.font.Font('Data/main_font.ttf', 50)
+finish_tick = 0
 
 forklift = None
 box_game = None
@@ -137,6 +138,7 @@ class Box(pygame.sprite.Sprite):
         self.finishing = False
 
     def update(self):
+        global finish_tick
         sp = pygame.key.get_pressed()
         if sp[pygame.K_LEFT] == 1:
             self.rect.x -= 1
@@ -164,6 +166,7 @@ class Box(pygame.sprite.Sprite):
                 finish_coords[1] - 10, finish_coords[1] + 10) and not self.finishing:
             print('Congratulations!')
             self.finishing = True
+            finish_tick = pygame.time.get_ticks()
 
 
 forklift, box_game, level_x, level_y = generate_level(load_level('map.txt'))
@@ -182,7 +185,10 @@ while running:
     forklift_group.update()
     forklift_group.draw(screen)
     clock.tick(FPS)
-    now_tick = pygame.time.get_ticks()
+    if not finish_tick:
+        now_tick = pygame.time.get_ticks()
+    else:
+        now_tick = finish_tick
     seconds = (now_tick - start_tick) // 1000
     minutes = seconds // 60
     seconds = str(seconds % 60)
