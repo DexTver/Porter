@@ -10,6 +10,7 @@ screen = pygame.display.set_mode(size)
 clock = pygame.time.Clock()
 FPS = 200
 button_sound = pygame.mixer.Sound('data/button.wav')
+cong_sound = pygame.mixer.Sound('data/congratulations.wav')
 
 
 def print_text(message, x, y, font_color=(0, 0, 0), font_type='data/calibri.ttf', font_size=25):
@@ -86,6 +87,7 @@ class Pause(pygame.sprite.Sprite):
         pygame.image.save(screen, 'pause_im.jpg')
         remake_image('pause_im.jpg')
         self.image = load_image('pause_im.jpg')
+        os.remove('pause_im.jpg')
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect()
 
@@ -96,8 +98,8 @@ def pause_screen():
     start_group = pygame.sprite.Group()
     Pause(start_group)
 
-    pause_button = Button(43, 43)
-    rerun_button = Button(43, 43)
+    pause_button = ImButton(43, 43, 'active_pause.jpg', 'inactive_pause.jpg')
+    rerun_button = ImButton(43, 43, 'active_rerun.jpg', 'inactive_rerun.jpg')
     menu_button = Button(70, 43)
 
     while True:
@@ -111,8 +113,8 @@ def pause_screen():
 
         print_text('Press any key...', 120, 400, (255, 255, 255), 'Data/main_font.ttf', 40)
 
-        pause_button.draw(3, 3, '| |', inactive=False)
-        rerun_button.draw(49, 3, '♺', game)
+        pause_button.draw(3, 3, inactive=False)
+        rerun_button.draw(49, 3, game)
         menu_button.draw(95, 3, 'Menu', menu_screen)
 
         pygame.display.flip()
@@ -130,8 +132,9 @@ def finish_screen():
     rerun_but = Button(80, 40)
     menu_but = Button(80, 40)
     next_but = Button(80, 40)
-    if int(correct_level[3]) < 10:
-        next_level = f'map{int(correct_level[3]) + 1}.txt'
+    wr_obl = correct_level[3:correct_level.index('.')]
+    if int(wr_obl) < 10:
+        next_level = f'map{int(wr_obl) + 1}.txt'
     else:
         final_sreen()
 
@@ -149,7 +152,7 @@ def finish_screen():
 
         rerun_but.draw(125, 350, 'Rerun', game, True)
         menu_but.draw(210, 350, 'Menu', menu_screen, True)
-        next_but.draw(295, 350, 'Next', game, True, next_level)
+        next_but.draw(295, 350, ' Next', game, True, next_level)
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -177,10 +180,9 @@ def final_sreen():
         print_text('Поздравляем, вы прошли', 40, 100, (255, 255, 255), font_size=40)
         print_text('уровень!', 190, 150, (255, 255, 255), font_size=40)
         print_text(f'Вы справились за: {minutes}:{seconds}', 65, 200, (255, 255, 255), font_size=40)
-        print_text('Поздравляем, все уровни пройдены!', 0, 100, (255, 255, 255), font_size=40)
 
-        rerun_but.draw(125, 350, 'Rerun', game, True)
-        menu_but.draw(210, 350, 'Menu', menu_screen, True)
+        rerun_but.draw(167, 350, 'Rerun', game, True)
+        menu_but.draw(252, 350, 'Menu', menu_screen, True)
 
         pygame.display.flip()
         clock.tick(FPS)
@@ -189,16 +191,17 @@ def final_sreen():
 def menu_screen():
     start_group = pygame.sprite.Group()
     Menu(start_group)
-    but_1 = Button(50, 50)
-    but_2 = Button(50, 50)
-    but_3 = Button(50, 50)
-    but_4 = Button(50, 50)
-    but_5 = Button(50, 50)
-    but_6 = Button(50, 50)
-    but_7 = Button(50, 50)
-    but_8 = Button(50, 50)
-    but_9 = Button(50, 50)
-    but_10 = Button(50, 50)
+    but_1 = Button(50, 50, size_of=35)
+    but_2 = Button(50, 50, size_of=35)
+    but_3 = Button(50, 50, size_of=35)
+    but_4 = Button(50, 50, size_of=35)
+    but_5 = Button(50, 50, size_of=35)
+    but_6 = Button(50, 50, size_of=35)
+    but_7 = Button(50, 50, size_of=35)
+    but_8 = Button(50, 50, size_of=35)
+    but_9 = Button(50, 50, size_of=35)
+    but_10 = Button(50, 50, size_of=35)
+    info_but = ImButton(50, 50, 'active_info.jpg', 'inactive_info.jpg')
 
     running = True
     while running:
@@ -207,19 +210,27 @@ def menu_screen():
                 running = False
         start_group.draw(screen)
 
-        but_1.draw(115, 300, '1', game, True, 'map1.txt')
-        but_2.draw(170, 300, '2', game, True, 'map2.txt')
-        but_3.draw(225, 300, '3', game, True, 'map3.txt')
-        but_4.draw(280, 300, '4', game, True, 'map4.txt')
-        but_5.draw(335, 300, '5', game, True, 'map5.txt')
-        but_6.draw(115, 355, '6', game, True, 'map6.txt')
-        but_7.draw(170, 355, '7', game, True, 'map7.txt')
-        but_8.draw(225, 355, '8', game, True, 'map8.txt')
-        but_9.draw(280, 355, '9', game, True, 'map9.txt')
-        but_10.draw(335, 355, '10', game, True, 'map10.txt')
+        print_text('Porter', 175, 100, (255, 255, 255), 'Data/main_font.ttf', 50)
+        print_text('Уровень:', 160, 200, (255, 255, 255), font_size=50)
+        but_1.draw(115, 250, ' 1', game, True, 'map1.txt')
+        but_2.draw(170, 250, ' 2', game, True, 'map2.txt')
+        but_3.draw(225, 250, ' 3', game, True, 'map3.txt')
+        but_4.draw(280, 250, ' 4', game, True, 'map4.txt')
+        but_5.draw(335, 250, ' 5', game, True, 'map5.txt')
+        but_6.draw(115, 305, ' 6', game, True, 'map6.txt')
+        but_7.draw(170, 305, ' 7', game, True, 'map7.txt')
+        but_8.draw(225, 305, ' 8', game, True, 'map8.txt')
+        but_9.draw(280, 305, ' 9', game, True, 'map9.txt')
+        but_10.draw(335, 305, '10', game, True, 'map10.txt')
+        info_but.draw(440, 440, show_info)
 
         pygame.display.flip()
         clock.tick(FPS)
+
+
+def show_info():
+    pygame.time.delay(200)
+    Image.open(r'data/how_to_play.png').show()
 
 
 def generate_level(level):
@@ -243,7 +254,6 @@ def generate_level(level):
             elif level[y][x] == '@':
                 Tile('crate', x, y)
                 new_player = Player(load_image('animated_forklift.png'), 4, 1, x, y)
-    # вернем игрока, а также размер поля в клетках
     return new_player, box_object, x, y
 
 
@@ -354,18 +364,23 @@ class Box(pygame.sprite.Sprite):
             finish_tick = pygame.time.get_ticks()
             pygame.image.save(screen, "after_level.jpg")
             remake_image('after_level.jpg')
+            os.remove('after_level.jpg')
+            pygame.mixer.Sound.play(cong_sound)
             finish_screen()
             terminate()
 
 
 class Button:
-    def __init__(self, but_width, but_height, active_clr=(23, 204, 58), inactive_clr=(13, 162, 58)):
+    def __init__(self, but_width, but_height, active_clr=(23, 204, 58), inactive_clr=(13, 162, 58),
+                 size_of=25):
         self.width = but_width
         self.height = but_height
         self.active_clr = active_clr
         self.inactive_clr = inactive_clr
+        self.size_of = size_of
 
     def draw(self, x, y, message, action=None, term=False, level=None, inactive=True):
+        global correct_level
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
@@ -373,20 +388,58 @@ class Button:
 
             if click[0] == 1:
                 pygame.mixer.Sound.play(button_sound)
-                pygame.time.delay(500)
-                if action is not None:
+                pygame.time.delay(200)
+                if action == game:
                     if level is None:
-                        action()
+                        action(correct_level)
                         if term:
                             terminate()
                     else:
                         action(level)
                         if term:
                             terminate()
+                elif action is not None:
+                    action()
+                    if term:
+                        terminate()
         else:
             pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
 
-        print_text(message, x + 7, y + 10)
+        print_text(message, x + 7, y + 10, font_size=self.size_of)
+
+
+class ImButton:
+    def __init__(self, but_width, but_height, active_im, inactive_im):
+        self.width = but_width
+        self.height = but_height
+        self.active_im = load_image(active_im)
+        self.inactive_im = load_image(inactive_im)
+
+    def draw(self, x, y, action=None, term=False, level=None, inactive=True):
+        global correct_level
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
+            screen.blit(self.active_im, (x, y))
+
+            if click[0] == 1:
+                pygame.mixer.Sound.play(button_sound)
+                pygame.time.delay(200)
+                if action == game:
+                    if level is None:
+                        action(correct_level)
+                        if term:
+                            terminate()
+                    else:
+                        action(level)
+                        if term:
+                            terminate()
+                elif action is not None:
+                    action()
+                    if term:
+                        terminate()
+        else:
+            screen.blit(self.inactive_im, (x, y))
 
 
 def game(map_name='map0.txt'):
@@ -399,8 +452,6 @@ def game(map_name='map0.txt'):
     box_game = None
 
     correct_level = map_name
-
-    finish_coords = -1, -1
 
     all_sprites = pygame.sprite.Group()
     crate = pygame.sprite.Group()
@@ -419,13 +470,12 @@ def game(map_name='map0.txt'):
         'crate': load_image('fon.jpg'),
         'finish': load_image('crown.png')}
 
-    forklift_image = load_image('forklift.png')
     box_image = load_image('box.png')
 
     forklift, box_game, level_x, level_y = generate_level(load_level(map_name))
 
-    pause_button = Button(43, 43)
-    rerun_button = Button(43, 43)
+    pause_button = ImButton(43, 43, 'active_pause.jpg', 'inactive_pause.jpg')
+    rerun_button = ImButton(43, 43, 'active_rerun.jpg', 'inactive_rerun.jpg')
     menu_button = Button(70, 43)
 
     start_tick = pygame.time.get_ticks()
@@ -449,8 +499,8 @@ def game(map_name='map0.txt'):
         forklift_group.update()
         forklift_group.draw(screen)
 
-        pause_button.draw(3, 3, '| |', pause_screen)
-        rerun_button.draw(49, 3, '♺', game, term=True, level=correct_level)
+        pause_button.draw(3, 3, pause_screen)
+        rerun_button.draw(49, 3, game, term=True, level=correct_level)
         menu_button.draw(95, 3, 'Menu', menu_screen, term=True)
 
         clock.tick(FPS)
@@ -463,7 +513,7 @@ def game(map_name='map0.txt'):
         seconds = str(seconds % 60)
         if len(seconds) == 1:
             seconds = '0' + seconds
-        time_render = font.render(f'{minutes}:{seconds}', True, pygame.Color('#3574e8'))
+        time_render = font.render(f'{minutes}:{seconds}', True, (13, 162, 58))
         screen.blit(time_render, (410, 5))
         pygame.display.flip()
 

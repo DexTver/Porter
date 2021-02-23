@@ -50,7 +50,7 @@ def start_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN or \
                     event.type == pygame.MOUSEBUTTONDOWN:
-                return  # начинаем игру
+                return
         start_group.draw(screen)
         pygame.display.flip()
         clock.tick(FPS)
@@ -66,7 +66,6 @@ def load_level(filename):
 
 player = None
 
-# группы спрайтов
 all_sprites = pygame.sprite.Group()
 tiles_group = pygame.sprite.Group()
 walls_group = pygame.sprite.Group()
@@ -84,7 +83,6 @@ def generate_level(level):
             elif level[y][x] == '@':
                 Tile('empty', x, y)
                 new_player = Player(x, y)
-    # вернем игрока, а также размер поля в клетках
     return new_player, x, y
 
 
