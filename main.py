@@ -62,6 +62,78 @@ def remake_image(im_name):
     im.save(f'data/{im_name}')
 
 
+class Button:
+    def __init__(self, but_width, but_height, active_clr=(23, 204, 58), inactive_clr=(13, 162, 58),
+                 size_of=25):
+        self.width = but_width
+        self.height = but_height
+        self.active_clr = active_clr
+        self.inactive_clr = inactive_clr
+        self.size_of = size_of
+
+    def draw(self, x, y, message, action=None, term=False, level=None, inactive=True):
+        global correct_level
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
+            pygame.draw.rect(screen, self.active_clr, (x, y, self.width, self.height))
+
+            if click[0] == 1:
+                pygame.mixer.Sound.play(button_sound)
+                pygame.time.delay(200)
+                if action == game:
+                    if level is None:
+                        action(correct_level)
+                        if term:
+                            terminate()
+                    else:
+                        action(level)
+                        if term:
+                            terminate()
+                elif action is not None:
+                    action()
+                    if term:
+                        terminate()
+        else:
+            pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
+
+        print_text(message, x + 7, y + 10, font_size=self.size_of)
+
+
+class ImButton:
+    def __init__(self, but_width, but_height, active_im, inactive_im):
+        self.width = but_width
+        self.height = but_height
+        self.active_im = load_image(active_im)
+        self.inactive_im = load_image(inactive_im)
+
+    def draw(self, x, y, action=None, term=False, level=None, inactive=True):
+        global correct_level
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
+            screen.blit(self.active_im, (x, y))
+
+            if click[0] == 1:
+                pygame.mixer.Sound.play(button_sound)
+                pygame.time.delay(200)
+                if action == game:
+                    if level is None:
+                        action(correct_level)
+                        if term:
+                            terminate()
+                    else:
+                        action(level)
+                        if term:
+                            terminate()
+                elif action is not None:
+                    action()
+                    if term:
+                        terminate()
+        else:
+            screen.blit(self.inactive_im, (x, y))
+
+
 class Menu(pygame.sprite.Sprite):
 
     def __init__(self, group):
@@ -108,6 +180,7 @@ def pause_screen():
                 terminate()
             elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
                 start_tick += pygame.time.get_ticks() - start_pause_tick
+                pygame.mixer.Sound.play(button_sound)
                 return
         start_group.draw(screen)
 
@@ -179,7 +252,9 @@ def final_sreen():
 
         print_text('Поздравляем, вы прошли', 40, 100, (255, 255, 255), font_size=40)
         print_text('уровень!', 190, 150, (255, 255, 255), font_size=40)
-        print_text(f'Вы справились за: {minutes}:{seconds}', 65, 200, (255, 255, 255), font_size=40)
+        print_text(f'Вы справились за: {minutes}:{seconds}', 55, 200, (255, 255, 255), font_size=40)
+        print_text('Это был последний', 95, 250, (255, 255, 255), font_size=40)
+        print_text('уровень.', 190, 300, (255, 255, 255), font_size=40)
 
         rerun_but.draw(167, 350, 'Rerun', game, True)
         menu_but.draw(252, 350, 'Menu', menu_screen, True)
@@ -231,30 +306,6 @@ def menu_screen():
 def show_info():
     pygame.time.delay(200)
     Image.open(r'data/how_to_play.png').show()
-
-
-def generate_level(level):
-    global finish_coords
-    new_player, x, y = None, None, None
-    for y in range(len(level)):
-        for x in range(len(level[y])):
-            if level[y][x] == '.':
-                Tile('crate', x, y)
-            elif level[y][x] == '#':
-                a = randrange(1, 6)
-                chosen_container = 'container_' + str(a)
-                Tile(chosen_container, x, y)
-            elif level[y][x] == '0':
-                Tile('crate', x, y)
-                box_object = Box(x, y)
-            elif level[y][x] == '1':
-                Tile('crate', x, y)
-                Tile('finish', x, y)
-                finish_coords = tile_width * x, tile_height * y
-            elif level[y][x] == '@':
-                Tile('crate', x, y)
-                new_player = Player(load_image('animated_forklift.png'), 4, 1, x, y)
-    return new_player, box_object, x, y
 
 
 class Tile(pygame.sprite.Sprite):
@@ -370,76 +421,33 @@ class Box(pygame.sprite.Sprite):
             terminate()
 
 
-class Button:
-    def __init__(self, but_width, but_height, active_clr=(23, 204, 58), inactive_clr=(13, 162, 58),
-                 size_of=25):
-        self.width = but_width
-        self.height = but_height
-        self.active_clr = active_clr
-        self.inactive_clr = inactive_clr
-        self.size_of = size_of
-
-    def draw(self, x, y, message, action=None, term=False, level=None, inactive=True):
-        global correct_level
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
-            pygame.draw.rect(screen, self.active_clr, (x, y, self.width, self.height))
-
-            if click[0] == 1:
-                pygame.mixer.Sound.play(button_sound)
-                pygame.time.delay(200)
-                if action == game:
-                    if level is None:
-                        action(correct_level)
-                        if term:
-                            terminate()
-                    else:
-                        action(level)
-                        if term:
-                            terminate()
-                elif action is not None:
-                    action()
-                    if term:
-                        terminate()
-        else:
-            pygame.draw.rect(screen, self.inactive_clr, (x, y, self.width, self.height))
-
-        print_text(message, x + 7, y + 10, font_size=self.size_of)
-
-
-class ImButton:
-    def __init__(self, but_width, but_height, active_im, inactive_im):
-        self.width = but_width
-        self.height = but_height
-        self.active_im = load_image(active_im)
-        self.inactive_im = load_image(inactive_im)
-
-    def draw(self, x, y, action=None, term=False, level=None, inactive=True):
-        global correct_level
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
-            screen.blit(self.active_im, (x, y))
-
-            if click[0] == 1:
-                pygame.mixer.Sound.play(button_sound)
-                pygame.time.delay(200)
-                if action == game:
-                    if level is None:
-                        action(correct_level)
-                        if term:
-                            terminate()
-                    else:
-                        action(level)
-                        if term:
-                            terminate()
-                elif action is not None:
-                    action()
-                    if term:
-                        terminate()
-        else:
-            screen.blit(self.inactive_im, (x, y))
+def generate_level(level):
+    global finish_coords
+    new_player, box_object, x, y = None, None, None, None
+    for y in range(len(level)):
+        for x in range(len(level[y])):
+            if level[y][x] == '.':
+                Tile('crate', x, y)
+            elif level[y][x] == '#':
+                a = randrange(1, 6)
+                chosen_container = 'container_' + str(a)
+                Tile(chosen_container, x, y)
+            elif level[y][x] == '0':
+                Tile('crate', x, y)
+                box_object = Box(x, y)
+            elif level[y][x] == '1':
+                Tile('crate', x, y)
+                Tile('finish', x, y)
+                finish_coords = tile_width * x, tile_height * y
+            elif level[y][x] == '@':
+                Tile('crate', x, y)
+                new_player = Player(load_image('animated_forklift.png'), 4, 1, x, y)
+    # добавим границу слева и сверху
+    for y in range(len(level)):
+        Tile('container_1', -1, y)
+    for x in range(len(level[y])):
+        Tile('container_1', x, -1)
+    return new_player, box_object, x, y
 
 
 def game(map_name='map0.txt'):
@@ -488,8 +496,10 @@ def game(map_name='map0.txt'):
                 forklift_group.update()
                 sp = pygame.key.get_pressed()
                 if sp[pygame.K_p] or sp[pygame.K_F9]:
+                    pygame.mixer.Sound.play(button_sound)
                     pause_screen()
                 if sp[pygame.K_F5]:
+                    pygame.mixer.Sound.play(button_sound)
                     game(correct_level)
 
         screen.fill((160, 160, 160))
