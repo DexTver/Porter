@@ -110,7 +110,7 @@ class ImButton:
     def draw(self, x, y, action=None, term=False, level=None, inactive=True):
         global correct_level
         mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
+        click = pygame.mouse.get_pressed(3)
         if x < mouse[0] < x + self.width and y < mouse[1] < y + self.height and inactive:
             screen.blit(self.active_im, (x, y))
 
@@ -134,6 +134,30 @@ class ImButton:
             screen.blit(self.inactive_im, (x, y))
 
 
+class Info(pygame.sprite.Sprite):
+    def __init__(self, group):
+        super().__init__(group)
+        self.image = load_image('how_to_play.png')
+        self.image = pygame.transform.scale(self.image, size)
+        self.rect = self.image.get_rect()
+
+
+def show_info():
+    start_group = pygame.sprite.Group()
+    Info(start_group)
+    running = True
+
+    close_but = Button(90, 45, size_of=30)
+
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        start_group.draw(screen)
+        close_but.draw(400, 445, 'CLOSE', menu_screen, term=True)
+        pygame.display.flip()
+
+
 class Menu(pygame.sprite.Sprite):
 
     def __init__(self, group):
@@ -141,11 +165,6 @@ class Menu(pygame.sprite.Sprite):
         self.image = load_image('crate_texture.jpg')
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect()
-
-
-def show_info():
-    pygame.time.delay(200)
-    Image.open(r'data/how_to_play.png').show()
 
 
 def menu_screen():
