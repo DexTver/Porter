@@ -143,6 +143,51 @@ class Menu(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 
+def show_info():
+    pygame.time.delay(200)
+    Image.open(r'data/how_to_play.png').show()
+
+
+def menu_screen():
+    start_group = pygame.sprite.Group()
+    Menu(start_group)
+    but_1 = Button(50, 50, size_of=35)
+    but_2 = Button(50, 50, size_of=35)
+    but_3 = Button(50, 50, size_of=35)
+    but_4 = Button(50, 50, size_of=35)
+    but_5 = Button(50, 50, size_of=35)
+    but_6 = Button(50, 50, size_of=35)
+    but_7 = Button(50, 50, size_of=35)
+    but_8 = Button(50, 50, size_of=35)
+    but_9 = Button(50, 50, size_of=35)
+    but_10 = Button(50, 50, size_of=35)
+    info_but = ImButton(50, 50, 'active_info.jpg', 'inactive_info.jpg')
+
+    running = True
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        start_group.draw(screen)
+
+        print_text('Porter', 175, 100, (255, 255, 255), 'Data/main_font.ttf', 50)
+        print_text('Уровень:', 160, 200, (255, 255, 255), font_size=50)
+        but_1.draw(115, 250, ' 1', game, True, 'map1.txt')
+        but_2.draw(170, 250, ' 2', game, True, 'map2.txt')
+        but_3.draw(225, 250, ' 3', game, True, 'map3.txt')
+        but_4.draw(280, 250, ' 4', game, True, 'map4.txt')
+        but_5.draw(335, 250, ' 5', game, True, 'map5.txt')
+        but_6.draw(115, 305, ' 6', game, True, 'map6.txt')
+        but_7.draw(170, 305, ' 7', game, True, 'map7.txt')
+        but_8.draw(225, 305, ' 8', game, True, 'map8.txt')
+        but_9.draw(280, 305, ' 9', game, True, 'map9.txt')
+        but_10.draw(335, 305, '10', game, True, 'map10.txt')
+        info_but.draw(440, 440, show_info)
+
+        pygame.display.flip()
+        clock.tick(FPS)
+
+
 class Finish(pygame.sprite.Sprite):
 
     def __init__(self, group):
@@ -150,48 +195,6 @@ class Finish(pygame.sprite.Sprite):
         self.image = load_image('after_level.jpg')
         self.image = pygame.transform.scale(self.image, size)
         self.rect = self.image.get_rect()
-
-
-class Pause(pygame.sprite.Sprite):
-
-    def __init__(self, group):
-        super().__init__(group)
-        pygame.image.save(screen, 'pause_im.jpg')
-        remake_image('pause_im.jpg')
-        self.image = load_image('pause_im.jpg')
-        os.remove('pause_im.jpg')
-        self.image = pygame.transform.scale(self.image, size)
-        self.rect = self.image.get_rect()
-
-
-def pause_screen():
-    global start_tick
-    start_pause_tick = pygame.time.get_ticks()
-    start_group = pygame.sprite.Group()
-    Pause(start_group)
-
-    pause_button = ImButton(43, 43, 'active_pause.jpg', 'inactive_pause.jpg')
-    rerun_button = ImButton(43, 43, 'active_rerun.jpg', 'inactive_rerun.jpg')
-    menu_button = Button(70, 43)
-
-    while True:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                terminate()
-            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                start_tick += pygame.time.get_ticks() - start_pause_tick
-                pygame.mixer.Sound.play(button_sound)
-                return
-        start_group.draw(screen)
-
-        print_text('Press any key...', 120, 400, (255, 255, 255), 'Data/main_font.ttf', 40)
-
-        pause_button.draw(3, 3, inactive=False)
-        rerun_button.draw(49, 3, game)
-        menu_button.draw(95, 3, 'Menu', menu_screen)
-
-        pygame.display.flip()
-        clock.tick(FPS)
 
 
 def finish_screen():
@@ -263,49 +266,46 @@ def final_sreen():
         clock.tick(FPS)
 
 
-def menu_screen():
-    start_group = pygame.sprite.Group()
-    Menu(start_group)
-    but_1 = Button(50, 50, size_of=35)
-    but_2 = Button(50, 50, size_of=35)
-    but_3 = Button(50, 50, size_of=35)
-    but_4 = Button(50, 50, size_of=35)
-    but_5 = Button(50, 50, size_of=35)
-    but_6 = Button(50, 50, size_of=35)
-    but_7 = Button(50, 50, size_of=35)
-    but_8 = Button(50, 50, size_of=35)
-    but_9 = Button(50, 50, size_of=35)
-    but_10 = Button(50, 50, size_of=35)
-    info_but = ImButton(50, 50, 'active_info.jpg', 'inactive_info.jpg')
+class Pause(pygame.sprite.Sprite):
 
-    running = True
-    while running:
+    def __init__(self, group):
+        super().__init__(group)
+        pygame.image.save(screen, 'pause_im.jpg')
+        remake_image('pause_im.jpg')
+        self.image = load_image('pause_im.jpg')
+        os.remove('pause_im.jpg')
+        self.image = pygame.transform.scale(self.image, size)
+        self.rect = self.image.get_rect()
+
+
+def pause_screen():
+    global start_tick
+    start_pause_tick = pygame.time.get_ticks()
+    start_group = pygame.sprite.Group()
+    Pause(start_group)
+
+    pause_button = ImButton(43, 43, 'active_pause.jpg', 'inactive_pause.jpg')
+    rerun_button = ImButton(43, 43, 'active_rerun.jpg', 'inactive_rerun.jpg')
+    menu_button = Button(70, 43)
+
+    while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                running = False
+                terminate()
+            elif event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
+                start_tick += pygame.time.get_ticks() - start_pause_tick
+                pygame.mixer.Sound.play(button_sound)
+                return
         start_group.draw(screen)
 
-        print_text('Porter', 175, 100, (255, 255, 255), 'Data/main_font.ttf', 50)
-        print_text('Уровень:', 160, 200, (255, 255, 255), font_size=50)
-        but_1.draw(115, 250, ' 1', game, True, 'map1.txt')
-        but_2.draw(170, 250, ' 2', game, True, 'map2.txt')
-        but_3.draw(225, 250, ' 3', game, True, 'map3.txt')
-        but_4.draw(280, 250, ' 4', game, True, 'map4.txt')
-        but_5.draw(335, 250, ' 5', game, True, 'map5.txt')
-        but_6.draw(115, 305, ' 6', game, True, 'map6.txt')
-        but_7.draw(170, 305, ' 7', game, True, 'map7.txt')
-        but_8.draw(225, 305, ' 8', game, True, 'map8.txt')
-        but_9.draw(280, 305, ' 9', game, True, 'map9.txt')
-        but_10.draw(335, 305, '10', game, True, 'map10.txt')
-        info_but.draw(440, 440, show_info)
+        print_text('Press any key...', 120, 400, (255, 255, 255), 'Data/main_font.ttf', 40)
+
+        pause_button.draw(3, 3, inactive=False)
+        rerun_button.draw(49, 3, game)
+        menu_button.draw(95, 3, 'Menu', menu_screen)
 
         pygame.display.flip()
         clock.tick(FPS)
-
-
-def show_info():
-    pygame.time.delay(200)
-    Image.open(r'data/how_to_play.png').show()
 
 
 class Tile(pygame.sprite.Sprite):
