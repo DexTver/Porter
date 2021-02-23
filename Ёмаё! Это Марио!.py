@@ -136,7 +136,7 @@ class Player(pygame.sprite.Sprite):
 
 
 start_screen()
-player, level_x, level_y = generate_level(load_level('Data/map.txt'))
+player, level_x, level_y = generate_level(load_level('Data/map0.txt'))
 running = True
 while running:
     for event in pygame.event.get():
