@@ -362,23 +362,23 @@ class Player(pygame.sprite.Sprite):
         if sp[pygame.K_LEFT] == 1:
             self.rect.x -= 1
             self.image = self.frames[3]
-        if sp[pygame.K_RIGHT] == 1:
+        elif sp[pygame.K_RIGHT] == 1:
             self.rect.x += 1
             self.image = self.frames[1]
-        if sp[pygame.K_UP] == 1:
+        elif sp[pygame.K_UP] == 1:
             self.rect.y -= 1
             self.image = self.frames[0]
-        if sp[pygame.K_DOWN] == 1:
+        elif sp[pygame.K_DOWN] == 1:
             self.rect.y += 1
             self.image = self.frames[2]
         if pygame.sprite.spritecollideany(self, containers_group):
             if sp[pygame.K_LEFT] == 1:
                 self.rect.x += 1
-            if sp[pygame.K_RIGHT] == 1:
+            elif sp[pygame.K_RIGHT] == 1:
                 self.rect.x -= 1
-            if sp[pygame.K_UP] == 1:
+            elif sp[pygame.K_UP] == 1:
                 self.rect.y += 1
-            if sp[pygame.K_DOWN] == 1:
+            elif sp[pygame.K_DOWN] == 1:
                 self.rect.y -= 1
         if pygame.sprite.spritecollideany(self, box_group):
             box_group.update()
@@ -407,28 +407,28 @@ class Box(pygame.sprite.Sprite):
         sp = pygame.key.get_pressed()
         if sp[pygame.K_LEFT] == 1:
             self.rect.x -= 1
-        if sp[pygame.K_RIGHT] == 1:
+        elif sp[pygame.K_RIGHT] == 1:
             self.rect.x += 1
-        if sp[pygame.K_UP] == 1:
+        elif sp[pygame.K_UP] == 1:
             self.rect.y -= 1
-        if sp[pygame.K_DOWN] == 1:
+        elif sp[pygame.K_DOWN] == 1:
             self.rect.y += 1
         if pygame.sprite.spritecollideany(self, containers_group):
             if sp[pygame.K_LEFT] == 1:
                 self.rect.x += 1
                 forklift.back('left')
-            if sp[pygame.K_RIGHT] == 1:
+            elif sp[pygame.K_RIGHT] == 1:
                 self.rect.x -= 1
                 forklift.back('right')
-            if sp[pygame.K_UP] == 1:
+            elif sp[pygame.K_UP] == 1:
                 self.rect.y += 1
                 forklift.back('up')
-            if sp[pygame.K_DOWN] == 1:
+            elif sp[pygame.K_DOWN] == 1:
                 self.rect.y -= 1
                 forklift.back('down')
-        if self.rect.x in range(finish_coords[0] - 5,
+        if self.rect.x in range(finish_coords[0] - 13,
                                 finish_coords[0] + 13) and self.rect.y in range(
-            finish_coords[1] - 5, finish_coords[1] + 13) and not self.finishing:
+            finish_coords[1] - 13, finish_coords[1] + 13) and not self.finishing:
             print('Congratulations!')
             self.finishing = True
             finish_tick = pygame.time.get_ticks()
