@@ -469,7 +469,7 @@ def generate_level(level):
     return new_player, box_object, x, y
 
 
-def game(map_name='map0.txt'):
+def game(map_name='map1.txt'):
     global forklift, box_game, tile_width, tile_height, crate, all_sprites, containers_group
     global tile_images, forklift_group, box_group, box_image, start_tick, correct_level
     font = pygame.font.Font('Data/main_font.ttf', 50)
