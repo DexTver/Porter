@@ -231,7 +231,7 @@ def finish_screen():
     if int(wr_obl) < 10:
         next_level = f'map{int(wr_obl) + 1}.txt'
     else:
-        final_sreen()
+        final_screen()
 
     if len(seconds) == 1:
         seconds = '0' + seconds
@@ -253,7 +253,7 @@ def finish_screen():
         clock.tick(FPS)
 
 
-def final_sreen():
+def final_screen():
     global start_tick, finish_tick, correct_level
     start_group = pygame.sprite.Group()
     Finish(start_group)
